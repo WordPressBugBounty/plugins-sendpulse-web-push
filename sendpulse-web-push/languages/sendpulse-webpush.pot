@@ -1,0 +1,136 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"Project-Id-Version: SendPulse Web Push\n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2022-09-15 13:14+0000"
+
+#: faq.php:10
+msgid ""
+"Add the plugin to WordPress by searching and installing, uploading a zip, "
+"FTP copy, or some other way, and activate it."
+msgstr ""
+
+#: faq.php:11
+msgid "After activation complete click on Setting link under plugin name."
+msgstr ""
+
+#: faq.php:14
+msgid ""
+"Copy code generated after site connection. Example: <code>&lt;sсript "
+"charset=\"UTF-8\" src=\"//web.webpushs.com/js/push/your_generated_hash_id."
+"js\" async&gt;&lt;/&gt;</code>"
+msgstr ""
+
+#: init.php:92 init.php:93 sendpulse-webpush.php:120
+msgid "FAQ"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://sendpulse.com/integrations/cms/wordpress"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://sendpulse.com/webpush?utm_source=wordpress"
+msgstr ""
+
+#: faq.php:12
+msgid ""
+"If you have an account at <a href=\"https://sendpulse.com/\" "
+"target=\"blank\">SendPulse</a> go to Push tab. If not register at <a "
+"href=\"https://sendpulse.com/register\" target=\"blank\">Sendpulse</a>."
+msgstr ""
+
+#: settings.php:16
+msgid "Insert integration code"
+msgstr ""
+
+#: faq.php:8
+msgid "Installation"
+msgstr ""
+
+#: faq.php:16
+msgid ""
+"Mark the checkbox if you want to pass information about your registered "
+"users to your account."
+msgstr ""
+
+#: settings.php:73
+msgid "Note: this event is triggered only when a new user signs up"
+msgstr ""
+
+#: settings.php:69
+msgid "Pass emails and usernames of Wordpress users for personalization."
+msgstr ""
+
+#: faq.php:15
+msgid "Past generated code on Settings page"
+msgstr ""
+
+#: sendpulse-webpush.php:119
+msgid "Register on Sendpulse"
+msgstr ""
+
+#. Author of the plugin
+msgid "SendPulse"
+msgstr ""
+
+#. Name of the plugin
+msgid "SendPulse Free Web Push"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"SendPulse Free Web Push plugin adds your web push integration code into the "
+"&lt;head&gt; section of your website. The plugin will enable web push "
+"subscription requests to your website visitors and optionally pass  emails "
+"and names of logged in users for segmentation and personalization. To get "
+"started: 1)Click the \"Activate\" link to the left of this description, 2) "
+"Sign up for a free <a href=\"https://sendpulse.com/webpush/register?"
+"utm_source=wordpress&utm_medium=referral&utm_campaign=wordpresspush\">"
+"Sendpulse account</a>, and 3) Add your website to SendPulse, copy and paste "
+"the integation code into the plugin settings section"
+msgstr ""
+
+#: init.php:72
+msgid "Sendpulse WebPush"
+msgstr ""
+
+#: init.php:83 init.php:84
+msgid "Settings"
+msgstr ""
+
+#: settings.php:41
+msgid "Succesfully edited %s!"
+msgstr ""
+
+#: faq.php:17
+msgid "That's all. You connected Push Messages to your site."
+msgstr ""
+
+#: settings.php:37
+msgid "The code is not updated"
+msgstr ""
+
+#: settings.php:17
+msgid ""
+"The code you put in here will be inserted into the &lt;head&gt; tag on every "
+"page."
+msgstr ""
+
+#: init.php:73
+msgid "WebPush"
+msgstr ""
+
+#: settings.php:59
+msgid ""
+"You need to <a target=\"_blank\" href=\"https://sendpulse.com/webpush?"
+"utm_source=wordpress\">create a free account</a> to get the web push "
+"integration code and send web push notifications."
+msgstr ""
