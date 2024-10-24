@@ -24,9 +24,22 @@ add_action('admin_notices', 'sp_webpush_admin_notices');
 add_action('wp_head', 'sendpulse_display', 1000);
 add_action('login_enqueue_scripts', 'sendpulse_display'); // Write our JS below here
 function sendpulse_display() {
-    $pageid = get_queried_object_id();
-    $html = get_option('sendpulse_code', '');
-    echo $html;
+    $legacy_script = html_entity_decode(get_option('sendpulse_code', ''));
+
+    $charset = 'UTF-8';
+    $push_url = html_entity_decode(esc_url(get_option('sendpulse_push_url', '')));
+    $script_id = html_entity_decode(esc_url(get_option('sendpulse_script_id', '')));
+    $script_params = html_entity_decode(esc_attr(get_option('sendpulse_script_params', '')));
+
+    $script = '<script charset="'. $charset .'" src="' . $push_url . $script_id . '" '.$script_params.'></script>';
+
+    if (!empty($legacy_script)) {
+        echo $legacy_script;
+    } elseif( !empty($push_url) && !empty($script_id) && !empty($script_params)) {
+        echo $script;
+    } else {
+
+    }
 }
 
 add_action('wp_footer', 'sendpulse_user_reg_action'); // Write our JS below here
@@ -36,24 +49,25 @@ function sendpulse_user_reg_action() {
     $sendpulse_addinfo = get_option('sendpulse_addinfo', 'N');
     if ($sendpulse_addinfo != 'Y')
         return;
-
-    if (isset($_COOKIE['sendpulse_webpush_addinfo'])) {
-        list($login, $email, $user_id) = explode('|', $_COOKIE['sendpulse_webpush_addinfo']);
-        $domain = sp_webpush_get_domain();
-        ?>
-        <script src="<?php echo SENDPULSE_WEBPUSH_PUBLIC_PATH;?>/js/utils.js" type="text/javascript" ></script>
-        <script type="text/javascript" >
-            domReady(function() {
-                var domain = '<?php echo $domain; ?>';
-                window.addEventListener("load", function() {
-                    oSpP.push("Name","<?php echo $login; ?>");
-                    oSpP.push("Email","<?php echo $email; ?>");
-                });
-            })
-        </script><?php
-        $domain = sp_webpush_get_domain();
-        $secure = empty($_SERVER["HTTPS"]) ? 0 : 1;
-        setcookie("sendpulse_webpush_addinfo", NULL, (strtotime('-1 Year', time())), '/', $domain, $secure);
+    if(!is_admin()) {
+        if (isset($_COOKIE['sendpulse_webpush_addinfo'])) {
+            list($login, $email, $user_id) = explode('|', $_COOKIE['sendpulse_webpush_addinfo']);
+            $domain = sp_webpush_get_domain();
+            ?>
+            <script src="<?php echo SENDPULSE_WEBPUSH_PUBLIC_PATH;?>/js/utils.js" type="text/javascript" ></script>
+            <script type="text/javascript" >
+                domReady(function() {
+                    var domain = '<?php echo $domain; ?>';
+                    window.addEventListener("load", function() {
+                        oSpP.push("Name","<?php echo $login; ?>");
+                        oSpP.push("Email","<?php echo $email; ?>");
+                    });
+                })
+            </script><?php
+            $domain = sp_webpush_get_domain();
+            $secure = empty($_SERVER["HTTPS"]) ? 0 : 1;
+            setcookie("sendpulse_webpush_addinfo", NULL, (strtotime('-1 Year', time())), '/', $domain, $secure);
+        }
     }
 }
 

@@ -6,96 +6,111 @@ if (!defined('ABSPATH')) {
 
 use \SendpulseWebPush\SendpulseWebPush;
 
-// Allow <script> tags with specific attributes
-function custom_kses_allowed_tags($tags) {
-    $tags['script'] = array(
-        'src' => true,
-        'charset' => true,
-        'async' => true,
-    );
-    return $tags;
-}
-add_filter('wp_kses_allowed_html', 'custom_kses_allowed_tags', 10, 1);
-
 function sendpulse_config() {
-$currenturl = esc_url($_SERVER["REQUEST_URI"]);
-?>
+    $currenturl = esc_url($_SERVER["REQUEST_URI"]);
 
-<link rel="stylesheet" type="text/css" href="<?php echo esc_url(SENDPULSE_WEBPUSH_PUBLIC_PATH); ?>/css/custom.css" media="all"/>
+    // Check if there is a legacy field with the full script
+    $legacy_script = html_entity_decode(get_option('sendpulse_code', ''));
 
-<div class="wrap">
-    <h2><?php _e('Insert integration code', 'sendpulse-webpush'); ?></h2>
-    <h3><?php _e('The code you put in here will be inserted into the &lt;head&gt; tag on every page.', 'sendpulse-webpush'); ?></h3>
+    if (!empty($legacy_script)) {
+        // If the legacy field exists, extract components and migrate them to new options
+        if (preg_match('/<script\s+charset="([^"]+)"\s+src="([^"]+\/)([^\/]+)"\s*(\w+="[^"]+"\s*)*(async)?\s*><\/script>/', $legacy_script, $matches)) {
+            //$charset = isset($matches[1]) ? $matches[1] : '';
+            $push_url = isset($matches[2]) ? $matches[2] : '';
+            $script_id = isset($matches[3]) ? $matches[3] : '';
+            $script_params = isset($matches[5]) ? trim($matches[5]) : '';
 
-    <?php
-    $html = esc_textarea(get_option('sendpulse_code', ''));
+            // Save components in the new fields
+            update_option('sendpulse_push_url', $push_url);
+            update_option('sendpulse_script_id', $script_id);
+            update_option('sendpulse_script_params', $script_params);
 
+            // Delete the legacy field since the data is now migrated
+            delete_option('sendpulse_code');
+
+            echo "<p class=\"success\">".esc_html__('Legacy script migrated successfully.', 'sendpulse-webpush')."</p>";
+        }
+    }
+
+    // Retrieve the saved values (which could have been migrated)
+    $push_url = get_option('sendpulse_push_url', '');
+    $script_id = get_option('sendpulse_script_id', '');
+    $script_params = get_option('sendpulse_script_params', '');
+
+    // Handle form submissions
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Verify nonce
         if (isset($_POST['_sendpulse_settings_nonce']) && wp_verify_nonce($_POST['_sendpulse_settings_nonce'], 'sendpulse_settings_nonce')) {
 
-            if (isset($_POST['sendpulse_active'])) {
-                update_option('sendpulse_active', 'Y');
-            } else {
-                delete_option('sendpulse_active');
-            }
-            if (isset($_POST['sendpulse_addinfo'])) {
-                update_option('sendpulse_addinfo', 'Y');
-            } else {
-                delete_option('sendpulse_addinfo');
+            // Reset button clicked: clear all saved values
+            if (isset($_POST['sendpulse_reset'])) {
+                delete_option('sendpulse_push_url');
+                delete_option('sendpulse_script_id');
+                delete_option('sendpulse_script_params');
+                echo "<p class=\"success\">".esc_html__('Values have been reset.', 'sendpulse-webpush')."</p>";
             }
 
-            if(isset($_POST['html'])){
-                $newhtml = wp_kses_post($_POST['html']);
-                if($newhtml == $html){
-                    echo "<p class=\"not-edited\">".esc_html__('The code is not updated', 'sendpulse-webpush')."</p>";
-                }else{
-                    update_option('sendpulse_code', $newhtml);
-                    $html = $newhtml;
-                    printf("<p class=\"success-edited\">".esc_html__("Successfully edited %s!", 'sendpulse-webpush')."</p>", '');
+            // If new script is submitted
+            if (!empty($_POST['sendpulse_script'])) {
+                $script_input = stripslashes($_POST['sendpulse_script']);
+
+                // Extract components using regex
+                if (preg_match('/<script\s+charset="([^"]+)"\s+src="([^"]+\/)([^\/]+)"\s*(\w+="[^"]+"\s*)*(async)?\s*><\/script>/', $script_input, $matches)) {
+                    // Extract components and sanitize them individually
+
+                    $push_url = isset($matches[2]) ? esc_url($matches[2]) : ''; // Base URL
+                    $script_id = isset($matches[3]) ? esc_html($matches[3]) : ''; // Script ID
+                    $script_params = isset($matches[5]) ? esc_html($matches[5]) : '';
+
+                    // Save the extracted components
+                    update_option('sendpulse_push_url', $push_url);
+                    update_option('sendpulse_script_id', $script_id);
+                    update_option('sendpulse_script_params', $script_params);
+
+                    echo "<p class=\"success\">".esc_html__('Script successfully saved.', 'sendpulse-webpush')."</p>";
+                } else {
+                    echo "<p class=\"error\">".esc_html__('Invalid script format.', 'sendpulse-webpush')."</p>";
                 }
             }
-        } else {
-            // Nonce verification failed, display an error message or take appropriate action.
-            echo "<p class=\"error\">".esc_html__('CSRF verification failed!', 'sendpulse-webpush')."</p>";
+
         }
     }
 
-    // Output nonce field
-    echo wp_nonce_field('sendpulse_settings_nonce', '_sendpulse_settings_nonce', true, false);
-
-    $sendpulse_active = get_option('sendpulse_active', 'N');
-    $sendpulse_addinfo = get_option('sendpulse_addinfo', 'N');
+    // Display the saved script or the input form based on whether values exist
     ?>
-    <form method="post" action="<?php echo $currenturl; ?>">
-        <?php wp_nonce_field( 'sendpulse_settings_nonce', '_sendpulse_settings_nonce' ); ?>
-        <?php
-        if(isset($html)) { ?>
-            <textarea style="white-space:pre; width:80%; min-width:600px; height:300px;" name="html">
-            <?php echo esc_textarea($html); ?>
-        </textarea>
-            <?php
-        } ?>
-        <br />
+    <div class="wrap">
 
-        <h3><?php _e('You need to <a target="_blank" href="https://sendpulse.com/webpush?utm_source=wordpress">create a free account</a> to get the web push integration code and send web push notifications.', 'sendpulse-webpush');?></h3>
-        <table>
-            <?php
-            $post_types = get_post_types('', 'names');
-            ?>
-            <tr>
-                <td>
-                    <input type="checkbox" name="sendpulse_addinfo" value="Y" <?php if($sendpulse_addinfo == 'Y'){ echo ' checked="checked"';} ?> />
-                </td>
-                <td>
-                    <?php _e('Pass emails and usernames of Wordpress users for personalization.', 'sendpulse-webpush');?>
-                </td>
-            </tr>
-        </table>
-        <p><?php _e('Note: this event is triggered only when a new user signs up' , 'sendpulse-webpush'); ?></p>
-        <?php submit_button();
-        echo "</form>";
-        ?>
-</div>
-<?php } ?>
+        <?php if (!empty($push_url) && !empty($script_id)): ?>
+            <!-- Display the saved script -->
+            <div>
+                <h2><?php _e('Your current integration script:', 'sendpulse-webpush'); ?></h2>
+                <span style="background-color: white; padding: 5px; border: #000; color: #646970;">
+                        &lt;script charset="UTF-8" src="<?php echo esc_url($push_url . $script_id); ?>" <?php echo esc_attr($script_params); ?>> &lt;/script&gt;
+                    </span>
+            </div>
+
+            <div>
+                <h2><?php _e('Remove current WebPush script:', 'sendpulse-webpush'); ?></h2>
+                <p><?php _e('Use this button only in case you need to change WebPush Script provided by SendPulse', 'sendpulse-webpush'); ?></p>
+                <!-- Button to reset (delete) the saved script values -->
+                <form method="post" action="<?php echo $currenturl; ?>">
+                    <?php wp_nonce_field('sendpulse_settings_nonce', '_sendpulse_settings_nonce'); ?>
+                    <input type="hidden" name="sendpulse_reset" value="1" />
+                    <?php submit_button(__('Remove', 'sendpulse-webpush'), 'delete'); ?>
+                </form>
+
+            </div>
+        <?php else: ?>
+            <h2><?php _e('Insert integration code', 'sendpulse-webpush'); ?></h2>
+            <h3><?php _e('The code you put in here will be inserted into the &lt;head&gt; tag on every page.', 'sendpulse-webpush'); ?></h3>
+            <!-- Show text area for input if no script is saved -->
+            <form method="post" action="<?php echo $currenturl; ?>">
+                <?php wp_nonce_field('sendpulse_settings_nonce', '_sendpulse_settings_nonce'); ?>
+                <textarea name="sendpulse_script" style="width:80%; min-width:600px; height:100px;"></textarea>
+                <?php submit_button(__('Save Script', 'sendpulse-webpush')); ?>
+            </form>
+        <?php endif; ?>
+    </div>
+    <?php
+}
