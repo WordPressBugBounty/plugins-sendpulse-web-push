@@ -28,7 +28,7 @@ function sendpulse_display() {
 
     $charset = 'UTF-8';
     $push_url = html_entity_decode(esc_url(get_option('sendpulse_push_url', '')));
-    $script_id = html_entity_decode(esc_url(get_option('sendpulse_script_id', '')));
+    $script_id = html_entity_decode(esc_html(get_option('sendpulse_script_id', '')));
     $script_params = html_entity_decode(esc_attr(get_option('sendpulse_script_params', '')));
 
     $script = '<script charset="'. $charset .'" src="' . $push_url . $script_id . '" '.$script_params.'></script>';

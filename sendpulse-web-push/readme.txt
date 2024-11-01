@@ -7,7 +7,7 @@ Author: SendPulse
 Requires PHP: 5.6
 Requires at least: 5.7
 Tested up to: 6.6.2
-Stable tag: 1.3.7
+Stable tag: 1.3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,25 +65,26 @@ SendPulse account is required. Please sign up free at [https://sendpulse.com/reg
   Yes we do
   
 == Changelog ==
+= 1.3.8 =
+* Fix script output bug
 
-= 1.0 =
-* Initial Release
+= 1.3.7 =
+* Avoid possible XSS vulnerability (thanks to Francesco Carlucci)
+* Update supported WordPress version to 6.6.2
 
-= 1.1.0 =
-* Minor tweaks and improvements
+= 1.3.6 =
+* Fix unexpected output during activation
+* WordPress 6.5 ready tested
 
-== Upgrade Notice ==
-= 1.0 =
-This is the first version. Give it a try!
+= 1.3.4 - 1.3.5 =
+* Avoid possible XSS vulnerability
 
-= 1.1.0 =
-* We made some minor improvements
+= 1.3.3 =
+* Fix Cross Site Request Forgery (CSRF)
+* Update supported WordPress version to 6.4.3
 
-= 1.2.1 =
-* Just changed tested version
-
-= 1.3.0 =
-* Add new push worker
+= 1.3.2 =
+* Small fixes
 
 = 1.3.1 =
 * Updated supported WP versions
@@ -91,22 +92,18 @@ This is the first version. Give it a try!
 * Options moved to own menu
 * Add settings and FAQ links to plugins page
 * Add FAQ to own plugin page
-* Updated translations 
+* Updated translations
 * Various fixes
-
-= 1.3.1 =
 * Tested up to Wordpress 6.3.1
 
-= 1.3.2 =
-* Small fixes
+= 1.3.0 =
+* Add new push worker
 
-= 1.3.3 =
-* Fix Cross Site Request Forgery (CSRF)
-* Update supported WordPress version to 6.4.3
+= 1.2.1 =
+* Just changed tested version
 
-= 1.3.4 - 1.3.5 =
-* Avoid possible XSS vulnerability
+= 1.1.0 =
+* Minor tweaks and improvements
 
-= 1.3.6 =
-* Fix unexpected output during activation
-* WordPress 6.5 ready tested
+= 1.0 =
+* Initial Release

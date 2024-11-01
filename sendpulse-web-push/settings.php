@@ -15,7 +15,6 @@ function sendpulse_config() {
     if (!empty($legacy_script)) {
         // If the legacy field exists, extract components and migrate them to new options
         if (preg_match('/<script\s+charset="([^"]+)"\s+src="([^"]+\/)([^\/]+)"\s*(\w+="[^"]+"\s*)*(async)?\s*><\/script>/', $legacy_script, $matches)) {
-            //$charset = isset($matches[1]) ? $matches[1] : '';
             $push_url = isset($matches[2]) ? $matches[2] : '';
             $script_id = isset($matches[3]) ? $matches[3] : '';
             $script_params = isset($matches[5]) ? trim($matches[5]) : '';
