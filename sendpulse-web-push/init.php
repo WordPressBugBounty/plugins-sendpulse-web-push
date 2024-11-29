@@ -3,7 +3,7 @@
 * Plugin Name: SendPulse Free Web Push
 * Plugin URI: https://sendpulse.com/integrations/cms/wordpress 
 * Description: SendPulse Free Web Push plugin adds your web push integration code into the &lt;head&gt; section of your website. The plugin will enable web push subscription requests to your website visitors and optionally pass  emails and names of logged in users for segmentation and personalization. To get started: 1)Click the "Activate" link to the left of this description, 2) Sign up for a free <a href="https://sendpulse.com/webpush/register?utm_source=wordpress&utm_medium=referral&utm_campaign=wordpresspush">Sendpulse account</a>, and 3) Add your website to SendPulse, copy and paste the integation code into the plugin settings section
-* Version: 1.3.8
+* Version: 1.3.9
 * Author: SendPulse
 * Author URI: https://sendpulse.com/webpush?utm_source=wordpress
 * License: GPLv2
